@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <defs>
+    <linearGradient id="bgPanda" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#18181B" />
+      <stop offset="100%" stop-color="#27272A" />
+    </linearGradient>
+    <linearGradient id="pandaPurple" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#A855F7" />
+      <stop offset="100%" stop-color="#6366F1" />
+    </linearGradient>
+    <filter id="glowPanda">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+  <rect width="120" height="120" rx="60" fill="url(#bgPanda)" />
+  <circle cx="60" cy="60" r="54" fill="none" stroke="#A855F7" stroke-width="2" opacity="0.4" />
+  
+  <!-- Panda Ears -->
+  <circle cx="34" cy="34" r="14" fill="#09090B" stroke="#A855F7" stroke-width="2" />
+  <circle cx="86" cy="34" r="14" fill="#09090B" stroke="#A855F7" stroke-width="2" />
+  
+  <!-- White Face Core -->
+  <circle cx="60" cy="66" r="32" fill="#F4F4F5" stroke="#71717A" stroke-width="1.5" />
+  
+  <!-- Cyber Eye Patches -->
+  <polygon points="38,52 52,54 48,72 34,68" fill="#18181B" stroke="#A855F7" stroke-width="1.5" />
+  <polygon points="82,52 68,54 72,72 86,68" fill="#18181B" stroke="#A855F7" stroke-width="1.5" />
+  
+  <!-- Neon Eyes -->
+  <ellipse cx="43" cy="62" rx="4" ry="5" fill="#A855F7" filter="url(#glowPanda)" />
+  <ellipse cx="77" cy="62" rx="4" ry="5" fill="#A855F7" filter="url(#glowPanda)" />
+  <circle cx="43" cy="62" r="1.5" fill="#FFFFFF" />
+  <circle cx="77" cy="62" r="1.5" fill="#FFFFFF" />
+  
+  <!-- Cyber Nose -->
+  <polygon points="60,76 66,82 54,82" fill="#A855F7" filter="url(#glowPanda)" />
+</svg>

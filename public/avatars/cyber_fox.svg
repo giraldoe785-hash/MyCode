@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <defs>
+    <linearGradient id="bgFox" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E1B4B" />
+      <stop offset="100%" stop-color="#0F172A" />
+    </linearGradient>
+    <linearGradient id="foxOrange" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F97316" />
+      <stop offset="100%" stop-color="#EA580C" />
+    </linearGradient>
+    <linearGradient id="foxCyber" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06B6D4" />
+      <stop offset="100%" stop-color="#3B82F6" />
+    </linearGradient>
+    <filter id="glowFox" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+  <rect width="120" height="120" rx="60" fill="url(#bgFox)" />
+  <circle cx="60" cy="60" r="54" fill="none" stroke="#6366F1" stroke-width="2" opacity="0.4" stroke-dasharray="4 2" />
+  
+  <!-- Ears -->
+  <polygon points="28,24 45,55 20,52" fill="url(#foxOrange)" stroke="#06B6D4" stroke-width="1.5" />
+  <polygon points="32,32 42,52 26,50" fill="#312E81" />
+  <polygon points="92,24 75,55 100,52" fill="url(#foxOrange)" stroke="#06B6D4" stroke-width="1.5" />
+  <polygon points="88,32 78,52 94,50" fill="#312E81" />
+  
+  <!-- Head Base -->
+  <polygon points="60,35 90,62 80,88 60,102 40,88 30,62" fill="url(#foxOrange)" stroke="#F97316" stroke-width="2" />
+  <!-- Cyber Plates -->
+  <polygon points="60,40 78,60 60,78 42,60" fill="#1E293B" stroke="#06B6D4" stroke-width="1.5" />
+  <!-- Cheeks -->
+  <polygon points="30,62 18,72 38,82" fill="#FFFFFF" opacity="0.9" />
+  <polygon points="90,62 102,72 82,82" fill="#FFFFFF" opacity="0.9" />
+  
+  <!-- Cyber Visor / Eyes -->
+  <path d="M 40 60 Q 60 55 80 60 L 78 68 Q 60 63 42 68 Z" fill="url(#foxCyber)" filter="url(#glowFox)" />
+  <line x1="45" y1="64" x2="75" y2="64" stroke="#FFFFFF" stroke-width="1.5" opacity="0.8" />
+  
+  <!-- Snout & Nose -->
+  <polygon points="60,78 68,90 52,90" fill="#0F172A" stroke="#06B6D4" stroke-width="1" />
+  <polygon points="60,86 64,90 56,90" fill="#06B6D4" filter="url(#glowFox)" />
+  <!-- Circuit lines -->
+  <path d="M 60 35 L 60 48 M 48 48 L 72 48" stroke="#06B6D4" stroke-width="1.5" />
+  <circle cx="60" cy="48" r="2" fill="#38BDF8" />
+</svg>

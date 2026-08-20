@@ -1,0 +1,22 @@
+{
+    "name":  "mycode-react-pro",
+    "private":  true,
+    "version":  "1.0.0",
+    "type":  "module",
+    "scripts":  {
+                    "dev":  "node scripts/dev.js",
+                    "build":  "node scripts/build.js",
+                    "preview":  "node scripts/preview.js",
+                    "test":  "node test_java_suite.mjs"
+                },
+    "dependencies":  {
+                         "lucide-react":  "^0.436.0",
+                         "react":  "^18.3.1",
+                         "react-dom":  "^18.3.1",
+                         "react-router-dom":  "^6.26.0"
+                     },
+    "devDependencies":  {
+                            "@vitejs/plugin-react":  "^4.3.1",
+                            "vite":  "^5.4.0"
+                        }
+}

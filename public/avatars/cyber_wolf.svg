@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <defs>
+    <linearGradient id="bgWolf" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#090D16" />
+      <stop offset="100%" stop-color="#1E293B" />
+    </linearGradient>
+    <linearGradient id="wolfCyan" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#22D3EE" />
+      <stop offset="100%" stop-color="#0284C7" />
+    </linearGradient>
+    <filter id="glowWolf">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+  <rect width="120" height="120" rx="60" fill="url(#bgWolf)" />
+  <circle cx="60" cy="60" r="54" fill="none" stroke="#22D3EE" stroke-width="2" opacity="0.3" stroke-dasharray="6 3" />
+  
+  <!-- Ears -->
+  <polygon points="26,18 46,48 20,44" fill="#334155" stroke="#22D3EE" stroke-width="2" />
+  <polygon points="30,26 42,46 25,43" fill="#0F172A" />
+  <polygon points="94,18 74,48 100,44" fill="#334155" stroke="#22D3EE" stroke-width="2" />
+  <polygon points="90,26 78,46 95,43" fill="#0F172A" />
+  
+  <!-- Wolf Head Armor -->
+  <polygon points="60,30 88,52 82,88 60,106 38,88 32,52" fill="#1E293B" stroke="#475569" stroke-width="2" />
+  <polygon points="60,38 78,54 60,94 42,54" fill="#0F172A" stroke="#22D3EE" stroke-width="1.5" />
+  
+  <!-- Glitch Eyes -->
+  <polygon points="42,58 54,60 52,66 40,64" fill="url(#wolfCyan)" filter="url(#glowWolf)" />
+  <polygon points="78,58 66,60 68,66 80,64" fill="url(#wolfCyan)" filter="url(#glowWolf)" />
+  
+  <!-- Cyber Snout & Fang plates -->
+  <polygon points="60,78 68,96 52,96" fill="#334155" stroke="#22D3EE" stroke-width="1.5" />
+  <polygon points="60,88 65,94 55,94" fill="#22D3EE" filter="url(#glowWolf)" />
+  <line x1="60" y1="30" x2="60" y2="48" stroke="#22D3EE" stroke-width="2" />
+  <circle cx="60" cy="48" r="3" fill="#38BDF8" filter="url(#glowWolf)" />
+</svg>

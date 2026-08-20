@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <defs>
+    <linearGradient id="bgTiger" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#451A03" />
+      <stop offset="100%" stop-color="#0F172A" />
+    </linearGradient>
+    <linearGradient id="tigerGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F59E0B" />
+      <stop offset="100%" stop-color="#D97706" />
+    </linearGradient>
+    <filter id="glowTiger">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+  <rect width="120" height="120" rx="60" fill="url(#bgTiger)" />
+  <circle cx="60" cy="60" r="54" fill="none" stroke="#F59E0B" stroke-width="2" opacity="0.4" />
+  
+  <!-- Ears -->
+  <polygon points="30,22 48,46 24,44" fill="url(#tigerGold)" stroke="#F59E0B" stroke-width="2" />
+  <polygon points="90,22 72,46 96,44" fill="url(#tigerGold)" stroke="#F59E0B" stroke-width="2" />
+  
+  <!-- Head Mask -->
+  <polygon points="60,34 90,56 82,92 60,102 38,92 30,56" fill="url(#tigerGold)" stroke="#B45309" stroke-width="2" />
+  <!-- Cyber Stripes -->
+  <polygon points="60,38 64,50 56,50" fill="#0F172A" />
+  <polygon points="40,44 48,52 38,54" fill="#0F172A" />
+  <polygon points="80,44 72,52 82,54" fill="#0F172A" />
+  <polygon points="36,66 48,68 38,74" fill="#0F172A" />
+  <polygon points="84,66 72,68 82,74" fill="#0F172A" />
+  
+  <!-- Eyes -->
+  <polygon points="42,58 54,60 50,68 38,64" fill="#22D3EE" filter="url(#glowTiger)" />
+  <polygon points="78,58 66,60 70,68 82,64" fill="#22D3EE" filter="url(#glowTiger)" />
+  
+  <!-- Snout -->
+  <polygon points="60,74 72,88 60,96 48,88" fill="#1E293B" stroke="#22D3EE" stroke-width="1.5" />
+  <polygon points="60,82 65,86 55,86" fill="#22D3EE" filter="url(#glowTiger)" />
+</svg>
