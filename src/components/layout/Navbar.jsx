@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useWallet } from '../../context/WalletContext';
+import { useCart } from '../../context/CartContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { LiveBadge } from '../video/LiveBadge';
 import { LanguageSelector } from '../common/LanguageSelector';
@@ -25,7 +26,8 @@ import {
   LayoutDashboard,
   ChevronDown,
   BarChart3,
-  Globe
+  Globe,
+  ShoppingCart
 } from 'lucide-react';
 import { COURSES_DATA } from '../../services/mockData';
 
@@ -33,6 +35,7 @@ export function Navbar() {
   const { user, isAuthenticated, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const { balance } = useWallet();
+  const { openCart, totalItemCount } = useCart();
   const { t, isSpanish, setLanguage } = useLanguage();
   const location = useLocation();
   const navigate = useNavigate();
@@ -116,6 +119,7 @@ export function Navbar() {
   };
 
   const navLinks = [
+    ...(isAuthenticated ? [{ label: isSpanish ? 'Mi Panel' : 'My Dashboard', path: '/dashboard', icon: LayoutDashboard }] : []),
     { label: t('nav.courses'), path: '/courses', icon: BookOpen },
     { label: t('nav.live'), path: '/live', icon: Radio, hasBadge: true },
     { label: t('nav.sandbox'), path: '/playground', icon: Code2 },
@@ -174,31 +178,23 @@ export function Navbar() {
             </div>
           </Link>
 
-          {/* Center: Desktop Navigation Links */}
+          {/* Center: Desktop Navigation Links with Enhanced Hover & Microinteractions */}
           <nav className="desktop-nav" style={{
             display: 'none',
             alignItems: 'center',
-            gap: '1.25rem',
+            gap: '0.65rem',
             margin: '0 auto',
             whiteSpace: 'nowrap'
           }}>
             {navLinks.map((link) => {
               const Icon = link.icon;
               const isActive = location.pathname === link.path;
+              const isPlans = link.path === '/pricing';
               return (
                 <Link
                   key={link.path}
                   to={link.path}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.4rem',
-                    fontSize: '0.875rem',
-                    fontWeight: 600,
-                    color: isActive ? 'var(--accent-purple)' : 'var(--text-secondary)',
-                    transition: 'color var(--transition-fast)',
-                    whiteSpace: 'nowrap'
-                  }}
+                  className={`navbar-link ${isActive ? 'active' : ''} ${isPlans ? 'nav-link-plans' : ''}`}
                 >
                   <Icon size={16} />
                   <span>{link.label}</span>
@@ -209,14 +205,14 @@ export function Navbar() {
           </nav>
 
           {/* Right Header Controls: Search, Lang Selector, Theme, Token Pill & Auth */}
-          <div style={{
+          <div className="right-header-controls" style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '0.6rem',
+            gap: '0.45rem',
             flexShrink: 0,
             whiteSpace: 'nowrap'
           }}>
-            {/* Quick Search Button (Desktop Full) */}
+            {/* Quick Search Button (Desktop Full - wide screens >= 1400px only) */}
             <button
               onClick={() => setSearchOpen(true)}
               className="btn-secondary btn-sm search-btn-full"
@@ -227,7 +223,8 @@ export function Navbar() {
                 color: 'var(--text-muted)',
                 padding: '0.35rem 0.75rem',
                 borderRadius: 'var(--radius-full)',
-                flexShrink: 0
+                flexShrink: 1,
+                maxWidth: '220px'
               }}
               title="Buscar cursos (Ctrl+K)"
             >
@@ -245,7 +242,7 @@ export function Navbar() {
               </kbd>
             </button>
 
-            {/* Quick Search Icon Only (Laptop/Medium screens) */}
+            {/* Quick Search Icon Only (Screens < 1400px) */}
             <button
               onClick={() => setSearchOpen(true)}
               className="btn-ghost search-btn-compact"
@@ -253,7 +250,8 @@ export function Navbar() {
                 display: 'none',
                 padding: '0.45rem',
                 borderRadius: 'var(--radius-full)',
-                color: 'var(--text-secondary)'
+                color: 'var(--text-secondary)',
+                flexShrink: 0
               }}
               title="Buscar cursos (Ctrl+K)"
               aria-label="Buscar"
@@ -263,6 +261,26 @@ export function Navbar() {
 
             {/* Independent Language Selector (Available for all users, auth or unauth) */}
             <LanguageSelector compact />
+
+            {/* Visible Theme Toggle Button (Light/Dark) */}
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="btn-ghost theme-toggle-btn"
+              style={{
+                padding: '0.45rem',
+                borderRadius: 'var(--radius-full)',
+                color: theme === 'dark' ? 'var(--accent-purple)' : 'var(--accent-gold-text)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0
+              }}
+              title={theme === 'dark' ? t('nav.theme_light') : t('nav.theme_dark')}
+              aria-label={theme === 'dark' ? t('nav.theme_light') : t('nav.theme_dark')}
+            >
+              {theme === 'dark' ? <Sun size={19} /> : <Moon size={19} />}
+            </button>
 
             {/* Notification Center */}
             <NotificationCenter />
@@ -276,7 +294,7 @@ export function Navbar() {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '0.35rem',
-                padding: '0.35rem 0.75rem',
+                padding: '0.32rem 0.65rem',
                 fontSize: '0.85rem',
                 fontWeight: 700
               }}
@@ -286,9 +304,35 @@ export function Navbar() {
               <span>{balance}</span>
             </Link>
 
+            {/* SHOPPING CART BUTTON */}
+            <button
+              type="button"
+              onClick={openCart}
+              className="btn-ghost"
+              style={{
+                position: 'relative',
+                padding: '0.45rem',
+                borderRadius: 'var(--radius-full)',
+                color: totalItemCount > 0 ? 'var(--accent-gold)' : 'var(--text-secondary)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0
+              }}
+              title={t('cart.open_cart')}
+              aria-label={t('cart.open_cart')}
+            >
+              <ShoppingCart size={19} />
+              {totalItemCount > 0 && (
+                <span className="cart-badge">
+                  {totalItemCount > 99 ? '99+' : totalItemCount}
+                </span>
+              )}
+            </button>
+
             {/* Authenticated State: Cyber Dropdown Menu Button */}
             {isAuthenticated ? (
-              <div style={{ position: 'relative' }}>
+              <div style={{ position: 'relative', flexShrink: 0 }}>
                 <button
                   ref={cyberButtonRef}
                   type="button"
@@ -297,8 +341,8 @@ export function Navbar() {
                   style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '0.5rem',
-                    padding: '0.3rem 0.65rem',
+                    gap: '0.45rem',
+                    padding: '0.28rem 0.55rem',
                     borderRadius: 'var(--radius-full)',
                     background: cyberMenuOpen 
                       ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(245, 158, 11, 0.2))'
@@ -309,7 +353,8 @@ export function Navbar() {
                       : '0 0 8px rgba(16, 185, 129, 0.2)',
                     cursor: 'pointer',
                     transition: 'all 0.2s ease',
-                    outline: 'none'
+                    outline: 'none',
+                    flexShrink: 0
                   }}
                   aria-expanded={cyberMenuOpen}
                   aria-haspopup="true"
@@ -335,7 +380,7 @@ export function Navbar() {
                     fontSize: '0.85rem',
                     fontWeight: 700,
                     color: 'var(--text-primary)',
-                    maxWidth: '100px',
+                    maxWidth: '90px',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap'
@@ -348,7 +393,8 @@ export function Navbar() {
                     color="#10B981"
                     style={{
                       transform: cyberMenuOpen ? 'rotate(180deg)' : 'rotate(0)',
-                      transition: 'transform 0.2s ease'
+                      transition: 'transform 0.2s ease',
+                      flexShrink: 0
                     }}
                   />
                 </button>
@@ -698,6 +744,26 @@ export function Navbar() {
               </span>
               <LanguageSelector />
             </div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.25rem 0' }}>
+              <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
+                {t('nav.theme_toggle_label')}
+              </span>
+              <button
+                type="button"
+                onClick={toggleTheme}
+                className="btn btn-secondary btn-sm"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.4rem',
+                  padding: '0.35rem 0.75rem',
+                  fontSize: '0.8rem'
+                }}
+              >
+                {theme === 'dark' ? <Sun size={14} color="#F59E0B" /> : <Moon size={14} color="var(--accent-purple)" />}
+                <span>{theme === 'dark' ? t('nav.theme_current_dark') : t('nav.theme_current_light')}</span>
+              </button>
+            </div>
             {isAuthenticated ? (
               <>
                 <Link to="/profile" className="btn btn-secondary" style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -711,6 +777,24 @@ export function Navbar() {
                 <Link to="/dashboard" className="btn btn-secondary" style={{ width: '100%' }}>
                   <LayoutDashboard size={16} /> {t('nav.dashboard')}
                 </Link>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    openCart();
+                  }}
+                  className="btn btn-secondary"
+                  style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+                >
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <ShoppingCart size={16} color="var(--accent-gold)" /> {t('cart.title')}
+                  </span>
+                  {totalItemCount > 0 && (
+                    <span className="badge badge-gold" style={{ fontSize: '0.7rem' }}>
+                      {totalItemCount}
+                    </span>
+                  )}
+                </button>
                 <Link to="/wallet" className="btn btn-secondary" style={{ width: '100%' }}>
                   <Zap size={16} fill="#F59E0B" /> {t('nav.wallet')} ({balance} tk)
                 </Link>
@@ -809,16 +893,37 @@ export function Navbar() {
           .desktop-auth { display: flex !important; }
           .mobile-menu-btn { display: none !important; }
         }
-        @media (min-width: 1200px) {
+        @media (min-width: 1400px) {
           .search-btn-full { display: flex !important; }
           .search-btn-compact { display: none !important; }
+        }
+        @media (min-width: 1200px) and (max-width: 1399px) {
+          .search-btn-compact { display: flex !important; }
+          .search-btn-full { display: none !important; }
+          .desktop-nav { gap: 0.45rem !important; }
+          .right-header-controls { gap: 0.4rem !important; }
         }
         @media (min-width: 992px) and (max-width: 1199px) {
           .search-btn-compact { display: flex !important; }
           .search-btn-full { display: none !important; }
+          .cyber-user-name { display: none; }
+          .desktop-nav { gap: 0.35rem !important; }
+          .desktop-nav .navbar-link { padding: 0.4rem 0.6rem !important; font-size: 0.85rem !important; }
+          .right-header-controls { gap: 0.35rem !important; }
         }
         @media (max-width: 1100px) {
           .instructor-nav-text { display: none; }
+        }
+        @media (max-width: 600px) {
+          .cyber-user-name { display: none; }
+        }
+        .cyber-menu-btn:focus-visible {
+          outline: 2px solid #10B981 !important;
+          outline-offset: 2px;
+        }
+        .cyber-dropdown-item:hover, .cyber-dropdown-item:focus-visible {
+          background-color: var(--bg-surface-secondary);
+          outline: none;
         }
       `}</style>
     </>

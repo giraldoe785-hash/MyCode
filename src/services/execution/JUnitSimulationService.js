@@ -90,7 +90,7 @@ export class JUnitSimulationService {
       /assertThrows\s*\(\s*(\w+)\.class\s*,\s*\(\s*\)\s*->\s*(?:\{([\s\S]*?)\}|([^\n;]+;?))\s*\);/g,
       (match, exc, blockBody, singleBody) => {
         const raw = (blockBody || singleBody || '').trim();
-        return `__assertThrows("${exc}", () => { ${raw} });`;
+        return `await __assertThrows("${exc}", async () => { ${raw} });`;
       }
     );
 
@@ -110,7 +110,7 @@ export class JUnitSimulationService {
    * @param {string} rawCode - Código fuente Java con @Test
    * @param {Object} options - Callbacks + cMathHelpers (de ApacheCommonsMathSimulationService)
    */
-  static async execute(rawCode, { onOutput, cMathHelpers = null, mode = 'junit' } = {}) {
+  static async execute(rawCode, { onOutput, onInputRequest, onDialogRequest, cMathHelpers = null, mode = 'junit' } = {}) {
     await new Promise(r => setTimeout(r, 60));
     const code = (rawCode || '').trim();
 
@@ -259,37 +259,68 @@ export class JUnitSimulationService {
           __assertNull(val, msg);
         }
 
+        function __unwrap(v) {
+          if (v !== null && v !== undefined && typeof v === 'object' && '__javaType' in v) {
+            return v.valueOf();
+          }
+          return v;
+        }
+
+        function __formatValue(v) {
+          if (v === null) return 'null';
+          if (v === undefined) return 'undefined';
+          if (typeof v === 'object' && '__javaType' in v) {
+            return v.toString();
+          }
+          if (Array.isArray(v)) {
+            return JSON.stringify(v);
+          }
+          if (typeof v === 'object') {
+            return JSON.stringify(v);
+          }
+          return String(v);
+        }
+
         function __assertEquals(expected, actual, deltaOrMsg, msg) {
           let pass;
           let message;
+          const uExpected = __unwrap(expected);
+          const uActual = __unwrap(actual);
+
           // Soporte de delta: assertEquals(expected, actual, delta) donde delta es número
           if (typeof deltaOrMsg === 'number') {
-            pass = Math.abs(expected - actual) <= deltaOrMsg;
-            message = msg || ('Esperado: ' + expected + ' ±' + deltaOrMsg + ', Obtenido: ' + actual);
+            pass = Math.abs(uExpected - uActual) <= deltaOrMsg;
+            message = msg || ('Esperado: ' + __formatValue(expected) + ' ±' + deltaOrMsg + ', Obtenido: ' + __formatValue(actual));
           } else {
-            pass = (typeof expected === 'object' || typeof actual === 'object')
-              ? JSON.stringify(expected) === JSON.stringify(actual)
-              : expected === actual;
-            message = deltaOrMsg || ('Esperado: ' + JSON.stringify(expected) + ', Obtenido: ' + JSON.stringify(actual));
+            if (typeof uExpected === 'number' && typeof uActual === 'number') {
+              pass = uExpected === uActual;
+            } else if (typeof uExpected === 'object' || typeof uActual === 'object') {
+              pass = JSON.stringify(uExpected) === JSON.stringify(uActual);
+            } else {
+              pass = uExpected === uActual;
+            }
+            message = deltaOrMsg || ('Esperado: ' + __formatValue(expected) + ', Obtenido: ' + __formatValue(actual));
           }
-          __assertions.push({ type: 'assertEquals', expected, actual, pass, message });
+          __assertions.push({ type: 'assertEquals', expected: uExpected, actual: uActual, pass, message });
           if (!pass) __testPassedRef.val = false;
         }
 
         function __assertTrue(cond, msg) {
-          const pass = Boolean(cond) === true;
+          const uCond = __unwrap(cond);
+          const pass = Boolean(uCond) === true;
           __assertions.push({
-            type: 'assertTrue', expected: true, actual: cond, pass,
-            message: msg || ('Esperado: true, Obtenido: ' + JSON.stringify(cond))
+            type: 'assertTrue', expected: true, actual: uCond, pass,
+            message: msg || ('Esperado: true, Obtenido: ' + __formatValue(cond))
           });
           if (!pass) __testPassedRef.val = false;
         }
 
         function __assertFalse(cond, msg) {
-          const pass = Boolean(cond) === false;
+          const uCond = __unwrap(cond);
+          const pass = Boolean(uCond) === false;
           __assertions.push({
-            type: 'assertFalse', expected: false, actual: cond, pass,
-            message: msg || ('Esperado: false, Obtenido: ' + JSON.stringify(cond))
+            type: 'assertFalse', expected: false, actual: uCond, pass,
+            message: msg || ('Esperado: false, Obtenido: ' + __formatValue(cond))
           });
           if (!pass) __testPassedRef.val = false;
         }
@@ -297,15 +328,20 @@ export class JUnitSimulationService {
         function __assertNotNull(val, msg) {
           const pass = val !== null && val !== undefined;
           __assertions.push({
-            type: 'assertNotNull', expected: 'no nulo', actual: val, pass,
-            message: msg || ('Esperado: objeto no nulo, Obtenido: ' + String(val))
+            type: 'assertNotNull', expected: 'no nulo', actual: __unwrap(val), pass,
+            message: msg || ('Esperado: objeto no nulo, Obtenido: ' + __formatValue(val))
           });
           if (!pass) __testPassedRef.val = false;
         }
 
-        function __assertThrows(expectedException, fn) {
+        async function __assertThrows(expectedException, fn) {
           let thrown = null;
-          try { fn(); } catch (e) { thrown = e; }
+          try {
+            const res = fn();
+            if (res && typeof res.then === 'function') {
+              await res;
+            }
+          } catch (e) { thrown = e; }
           const pass = thrown !== null;
           __assertions.push({
             type: 'assertThrows', expected: expectedException,
@@ -356,13 +392,37 @@ export class JUnitSimulationService {
           };
         };
 
-        const executor = new Function(
+        const Integer = {
+          parseInt(str) {
+            const val = parseInt(String(str).trim(), 10);
+            if (isNaN(val)) throw new Error('java.lang.NumberFormatException: For input string: "' + str + '"');
+            return val;
+          },
+          valueOf(str) { return this.parseInt(str); }
+        };
+
+        const Double = {
+          parseDouble(str) {
+            const val = parseFloat(String(str).trim());
+            if (isNaN(val)) throw new Error('java.lang.NumberFormatException: For input string: "' + str + '"');
+            return __javaDouble(val);
+          },
+          valueOf(str) { return this.parseDouble(str); }
+        };
+
+        const JOptionPane = JavaExecutionService.createJOptionPane(onDialogRequest, onInputRequest, () => {});
+
+        const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor;
+        const executor = new AsyncFunction(
           '__assertions',
           '__testPassedRef',
           '__failureReasonRef',
           '__tick',
           'Number__javaDiv',
           '__javaDouble',
+          'Integer',
+          'Double',
+          'JOptionPane',
           '__cMathHelpers',
           'Math',
           'JSON',
@@ -375,13 +435,16 @@ export class JUnitSimulationService {
         // Number__javaDiv per-test: usa __javaDouble local para preservar tipo flotante
         const Number__javaDiv = _makeDiv(__javaDouble);
 
-        executor(
+        await executor(
           assertions,
           testPassedRef,
           failureReasonRef,
           __tick,
           Number__javaDiv,
           __javaDouble,
+          Integer,
+          Double,
+          JOptionPane,
           cMathHelpers || {},
           Math,
           JSON

@@ -15,6 +15,7 @@ import {
   Users
 } from 'lucide-react';
 import { PLANS_DATA } from '../services/mockData';
+import { TokenPackagesSection } from '../components/cart/TokenPackagesSection';
 
 export function PricingView() {
   const { user } = useAuth();

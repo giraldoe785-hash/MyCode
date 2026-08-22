@@ -3,6 +3,7 @@ import { useWallet } from '../context/WalletContext';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { Link } from 'react-router-dom';
+import { TokenPackagesSection } from '../components/cart/TokenPackagesSection';
 import {
   Wallet,
   Zap,
@@ -96,7 +97,7 @@ export function WalletView() {
       <div className="container" style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
         {/* Header */}
         <div>
-          <div style={{ color: 'var(--accent-purple)', fontWeight: 700, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+          <div className="section-overline">
             {t('wallet.badge')}
           </div>
           <h1 className="heading-lg" style={{ margin: '0.25rem 0' }}>
@@ -153,7 +154,10 @@ export function WalletView() {
           </div>
         </div>
 
-        {/* 2. Interactive Token Consumption Calculator */}
+        {/* 2. Token Packages Section (Buy / Add to Cart) */}
+        <TokenPackagesSection />
+
+        {/* 3. Interactive Token Consumption Calculator */}
         <div className="card" style={{ padding: '2rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.5rem' }}>
             <Calculator size={22} color="var(--accent-purple)" />

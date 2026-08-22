@@ -355,7 +355,7 @@ export function PlaygroundView() {
 
         {/* Informational Cards */}
         <div className="grid-3" style={{ marginTop: '1rem' }}>
-          <div className="card">
+          <div className="card card-info-gold">
             <Shield size={20} color="var(--accent-purple)" style={{ marginBottom: '0.5rem' }} />
             <h4 style={{ fontSize: '0.95rem', fontWeight: 700, margin: '0 0 0.25rem' }}>{t('playground.card_1_title')}</h4>
             <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
@@ -363,7 +363,7 @@ export function PlaygroundView() {
             </p>
           </div>
 
-          <div className="card">
+          <div className="card card-info-gold">
             <Terminal size={20} color="var(--accent-cyan)" style={{ marginBottom: '0.5rem' }} />
             <h4 style={{ fontSize: '0.95rem', fontWeight: 700, margin: '0 0 0.25rem' }}>{t('playground.card_2_title')}</h4>
             <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
@@ -371,7 +371,7 @@ export function PlaygroundView() {
             </p>
           </div>
 
-          <div className="card">
+          <div className="card card-info-gold">
             <Sparkles size={20} color="#F59E0B" style={{ marginBottom: '0.5rem' }} />
             <h4 style={{ fontSize: '0.95rem', fontWeight: 700, margin: '0 0 0.25rem' }}>{t('playground.card_3_title')}</h4>
             <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>

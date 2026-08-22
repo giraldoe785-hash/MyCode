@@ -22,7 +22,10 @@ import {
   EyeOff,
   Upload,
   Image as ImageIcon,
-  AlertTriangle
+  AlertTriangle,
+  Copy,
+  Check,
+  KeyRound
 } from 'lucide-react';
 
 export function RegisterView() {
@@ -46,8 +49,72 @@ export function RegisterView() {
   const [photoError, setPhotoError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [copiedPassword, setCopiedPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Cryptographically Secure Strong Password Generator
+  const generateStrongPassword = () => {
+    const uppercaseChars = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+    const lowercaseChars = 'abcdefghijkmnopqrstuvwxyz';
+    const numberChars = '23456789';
+    const symbolChars = '!@#$%&*';
+    const allChars = uppercaseChars + lowercaseChars + numberChars + symbolChars;
+    const length = 14;
+
+    let result = '';
+    const randomBuffer = new Uint32Array(length);
+
+    while (true) {
+      if (typeof window !== 'undefined' && window.crypto && window.crypto.getRandomValues) {
+        window.crypto.getRandomValues(randomBuffer);
+      } else {
+        for (let i = 0; i < length; i++) {
+          randomBuffer[i] = Math.floor(Math.random() * 1000000);
+        }
+      }
+
+      let candidate = '';
+      for (let i = 0; i < length; i++) {
+        candidate += allChars[randomBuffer[i] % allChars.length];
+      }
+
+      if (
+        /[A-Z]/.test(candidate) &&
+        /[a-z]/.test(candidate) &&
+        /[0-9]/.test(candidate) &&
+        candidate.length >= 7 &&
+        candidate.length <= 150
+      ) {
+        result = candidate;
+        break;
+      }
+    }
+
+    setFormData(prev => ({
+      ...prev,
+      password: result,
+      confirmPassword: result
+    }));
+    setShowPassword(true);
+    setShowConfirmPassword(true);
+    setError('');
+    addToast(t('auth.pwd_generated_success'), 'success');
+  };
+
+  const handleCopyPassword = async () => {
+    if (!formData.password) return;
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(formData.password);
+      }
+      setCopiedPassword(true);
+      addToast(t('auth.pwd_copied_toast'), 'info');
+      setTimeout(() => setCopiedPassword(false), 2000);
+    } catch (err) {
+      console.warn('Clipboard write error:', err);
+    }
+  };
 
   const isInstructor = formData.rol === 'Instructor';
 
@@ -333,11 +400,62 @@ export function RegisterView() {
 
           {/* Password Input with 150 Char Limit, Indicators & Live Counter */}
           <div className="form-group" style={{ margin: 0 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <label className="form-label">{t('auth.password_label')}</label>
-              <span className={`char-counter ${formData.password.length >= 140 ? (formData.password.length === 150 ? 'limit' : 'warning') : ''}`}>
-                {formData.password.length}/150
-              </span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem', flexWrap: 'wrap', gap: '0.4rem' }}>
+              <label className="form-label" style={{ margin: 0 }}>{t('auth.password_label')}</label>
+              
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                <button
+                  type="button"
+                  onClick={generateStrongPassword}
+                  className="btn-ghost"
+                  style={{
+                    fontSize: '0.75rem',
+                    color: 'var(--accent-gold-text)',
+                    fontWeight: 700,
+                    padding: '0.2rem 0.5rem',
+                    borderRadius: 'var(--radius-sm)',
+                    backgroundColor: 'var(--accent-gold-soft)',
+                    border: '1px solid var(--accent-gold-border)',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.35rem',
+                    cursor: 'pointer'
+                  }}
+                  title={t('auth.generate_pwd_btn')}
+                  aria-label={t('auth.generate_pwd_btn')}
+                >
+                  <Sparkles size={12} color="var(--accent-gold)" />
+                  <span>{t('auth.generate_pwd_btn')}</span>
+                </button>
+
+                {formData.password && isPasswordValid && (
+                  <button
+                    type="button"
+                    onClick={handleCopyPassword}
+                    className="btn-ghost"
+                    style={{
+                      fontSize: '0.72rem',
+                      color: copiedPassword ? 'var(--color-success)' : 'var(--text-muted)',
+                      padding: '0.2rem 0.45rem',
+                      borderRadius: 'var(--radius-sm)',
+                      border: '1px solid var(--border-subtle)',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.25rem',
+                      cursor: 'pointer'
+                    }}
+                    title={t('auth.copy_pwd_btn')}
+                    aria-label={t('auth.copy_pwd_btn')}
+                  >
+                    {copiedPassword ? <Check size={12} color="var(--color-success)" /> : <Copy size={12} />}
+                    <span>{copiedPassword ? t('auth.pwd_copied_badge') : t('auth.copy_pwd_btn')}</span>
+                  </button>
+                )}
+
+                <span className={`char-counter ${formData.password.length >= 140 ? (formData.password.length === 150 ? 'limit' : 'warning') : ''}`}>
+                  {formData.password.length}/150
+                </span>
+              </div>
             </div>
             <div style={{ position: 'relative' }}>
               <Lock size={18} color="var(--text-muted)" style={{ position: 'absolute', left: '0.9rem', top: '50%', transform: 'translateY(-50%)' }} />

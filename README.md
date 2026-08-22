@@ -3,7 +3,7 @@
 [![React](https://img.shields.io/badge/React-18.3.1-61DAFB?logo=react&logoColor=black)](https://reactjs.org/)
 [![Vite](https://img.shields.io/badge/Vite-5.4.0-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
 [![Pyodide](https://img.shields.io/badge/Pyodide-0.26.2-FFD43B?logo=python&logoColor=blue)](https://pyodide.org/)
-[![Tests](https://img.shields.io/badge/Tests-70%2F70%20Passing%20(100%25)-10B981)](#-suites-de-pruebas-y-calidad-qa)
+[![Tests](https://img.shields.io/badge/Tests-83%2F83%20Passing%20(100%25)-10B981)](#-suites-de-pruebas-y-calidad-qa)
 [![i18n](https://img.shields.io/badge/i18n-ES%20%7C%20EN%20(Symmetric)-8B5CF6)](#-internacionalización-i18n)
 [![Architecture](https://img.shields.io/badge/Architecture-Frontend--First%20%2F%20Educational%20Simulator-EC4899)](#-principio-de-honestidad-arquitectónica)
 
@@ -85,6 +85,8 @@ Este proyecto implementa una distinción estricta y transparente entre las tecno
 | **Bloqueo tras 6 Intentos** | `IMPLEMENTADO` | Bloqueo de 4 horas tras 6 contraseñas erróneas y registro de alerta de seguridad |
 | **Cursos y Reproductor** | `IMPLEMENTADO` | Navegación de módulos, control de video y almacenamiento de progreso |
 | **Analítica de Cursos** | `IMPLEMENTADO` | Cálculo de retención, tasa de abandono por lección y promedio de notas |
+| **Paquetes de Tokens & Carrito** | `IMPLEMENTADO` | 4 paquetes de tokens, carrito interactivo con persistencia local y checkout mock |
+| **Identidad Dorada (Modo Claro)** | `IMPLEMENTADO` | Paleta dorada secundaria para modo claro calibrada con alto contraste (WCAG AA/AAA) |
 | **Live Streaming** | `EN DESARROLLO` | Interfaz de estudio docente con credenciales OBS/RTMP y sala simulada |
 | **Backend Remoto** | `PLANEADO` | Microservicios para persistencia centralizada y compilación Java en contenedor |
 
@@ -292,9 +294,12 @@ int opcion = JOptionPane.showOptionDialog(null, "Elige:", "Opciones", JOptionPan
 - **Métricas Analíticas:** Tasa de finalización de curso, promedio de calificaciones de alumnos y cálculo de la lección con mayor tasa de abandono.
 - **Anti-Spam de Notificaciones (A.1):** Agrupación inteligente de entregas no leídas para evitar saturación del panel de alertas.
 
-### 4. Billetera y Tokens Educativos
-- **Saldo de Tokens:** Control de consumo de tokens virtuales por cada compilación ejecutada.
-- **Historial de Transacciones:** Registro cronológico de consumos, recargas y bonos con descripciones internacionalizadas (ES/EN).
+### 4. Billetera, Paquetes de Tokens y Carrito de Compra (Frontend / Mock)
+- **4 Paquetes Estructurados:** "Puñado de Tokens" (100 tk), "Balde de Tokens" (500 tk), "Vagón de Tokens" (1.500 tk, Destacado/Popular) y "Montaña de Tokens" (5.000 tk).
+- **Carrito de Compras:** Drawer lateral interactivo con selección de cantidades, eliminación, subtotal, cálculo de tokens acumulados y persistencia en `localStorage`.
+- **Flujo de Checkout Prototipo:** Modal informativo que notifica el estado de prototipo educativo frontend sin cobros monetarios reales.
+- **Acceso desde Navbar:** Botón de carrito con badge numérico en tiempo real en cabecera desktop y menú móvil.
+- **Saldo e Historial:** Control de consumo de tokens por compilación y registro de transacciones con soporte multiidioma.
 
 ### 5. Internacionalización Reactiva (i18n)
 - **Cambio Dinámico ES ↔ EN:** Transición instantánea sin recarga de página mediante `LanguageContext`.
@@ -525,9 +530,15 @@ node test_requests_and_junit.mjs
 
 # 5. Suite de Auditoría de Negocio (Bloque A) y Simetría i18n (Bloque B) (30 pruebas)
 node test_block_a_b.mjs
+
+# 6. Suite del Sistema de Tokens, Carrito e Integridad de Paquetes (6 pruebas)
+node test_cart_and_tokens_suite.mjs
+
+# 7. Suite de Generador de Claves, Microinteracciones de Navbar y Theme Toggle (7 pruebas)
+node test_ui_improvements_suite.mjs
 ```
 
 ### Resumen de Resultados QA:
-- **Total de pruebas automatizadas:** 70 pruebas.
-- **Tasa de éxito:** 100% (70/70 pruebas aprobadas).
+- **Total de pruebas automatizadas:** 83 pruebas.
+- **Tasa de éxito:** 100% (83/83 pruebas aprobadas).
 - **Estado de Compilación:** `vite build` completa en ~15s con 0 errores y 0 warnings.

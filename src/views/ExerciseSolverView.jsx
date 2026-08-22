@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useWallet } from '../context/WalletContext';
 import { api } from '../services/api';
 import { useLanguage } from '../context/LanguageContext';
-import { ArrowLeft, Play, Send, CheckCircle, AlertTriangle, Loader2 } from 'lucide-react';
+import { ArrowLeft, Play, Send, CheckCircle, AlertTriangle, Loader2, Save, BookmarkCheck } from 'lucide-react';
 import { CodeEditor } from '../components/code/CodeEditor';
 
 export function ExerciseSolverView() {
@@ -12,13 +12,16 @@ export function ExerciseSolverView() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { balance, consumeTokens } = useWallet();
-  const { t } = useLanguage();
+  const { t, isSpanish } = useLanguage();
 
   const [exercise, setExercise] = useState(null);
   const [code, setCode] = useState('');
   const [isExecuting, setIsExecuting] = useState(false);
   const [statusMessage, setStatusMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSavingDraft, setIsSavingDraft] = useState(false);
+  const [draftSavedMessage, setDraftSavedMessage] = useState('');
+  const [previousSubmission, setPreviousSubmission] = useState(null);
   const [submissionStatus, setSubmissionStatus] = useState(null); // 'success', 'error'
   const [loading, setLoading] = useState(true);
   
@@ -28,15 +31,32 @@ export function ExerciseSolverView() {
   useEffect(() => {
     const fetchExercise = async () => {
       setLoading(true);
-      const ex = await api.exercises.getExerciseById(exerciseId);
+      const [ex, latestAttempt, studentSubs] = await Promise.all([
+        api.exercises.getExerciseById(exerciseId),
+        api.attempts.getLatestAttempt(user?.id || 'usr_101', exerciseId),
+        api.submissions.getSubmissionsByStudent(user?.id || 'usr_101')
+      ]);
+
       if (ex) {
         setExercise(ex);
-        setCode(ex.initialCode || '');
+        const prevSub = studentSubs.find(s => s.exerciseId === exerciseId);
+        if (prevSub) {
+          setPreviousSubmission(prevSub);
+        }
+        
+        // Prioritize: latest attempt code -> previous submission code -> starter code
+        if (latestAttempt?.code) {
+          setCode(latestAttempt.code);
+        } else if (prevSub?.code) {
+          setCode(prevSub.code);
+        } else {
+          setCode(ex.initialCode || '');
+        }
       }
       setLoading(false);
     };
     fetchExercise();
-  }, [exerciseId]);
+  }, [exerciseId, user?.id]);
 
   // Manejador centralizado de ejecución y cobro de tokens con soporte de input interactivo
   const handleRun = async (currentCode, lang, callbacks = {}) => {
@@ -97,6 +117,26 @@ export function ExerciseSolverView() {
     }
   };
 
+  const handleSaveAttempt = async () => {
+    if (!code.trim() || isSavingDraft) return;
+    setIsSavingDraft(true);
+    try {
+      await api.attempts.saveAttempt({
+        studentId: user?.id || 'usr_101',
+        exerciseId: exercise.id,
+        code,
+        language: exercise.language,
+        passed: true
+      });
+      setDraftSavedMessage(t('student.attempt_saved_toast') || 'Borrador guardado');
+      setTimeout(() => setDraftSavedMessage(''), 3000);
+    } catch (e) {
+      console.error('Error saving attempt:', e);
+    } finally {
+      setIsSavingDraft(false);
+    }
+  };
+
   const handleSubmit = async () => {
     if (!code.trim() || isSubmitting) return;
     setIsSubmitting(true);
@@ -104,8 +144,9 @@ export function ExerciseSolverView() {
     
     // El envío de soluciones es gratuito (no descuenta tokens)
     const res = await api.submissions.submitExercise({
-      studentId: user?.id || 'usr_anonymous',
-      instructorId: "ins_1",
+      studentId: user?.id || 'usr_101',
+      studentName: user?.nombre || 'Estudiante',
+      instructorId: exercise.instructorId || "ins_1",
       courseId: exercise.courseId,
       exerciseId: exercise.id,
       code: code,
@@ -114,6 +155,15 @@ export function ExerciseSolverView() {
 
     if (res.success) {
       setSubmissionStatus('success');
+      await api.activity.recordActivity({
+        studentId: user?.id || 'usr_101',
+        type: 'exercise_submitted',
+        title: isSpanish ? 'Solución Enviada' : 'Solution Submitted',
+        titleEn: 'Solution Submitted',
+        description: exercise.titulo,
+        descriptionEn: exercise.tituloEn || exercise.titulo,
+        courseId: exercise.courseId
+      });
     } else {
       setSubmissionStatus('error');
     }
@@ -122,6 +172,8 @@ export function ExerciseSolverView() {
 
   if (loading) return <div className="container" style={{ paddingTop: '4rem' }}>Cargando ejercicio...</div>;
   if (!exercise) return <div className="container" style={{ paddingTop: '4rem' }}>Ejercicio no encontrado.</div>;
+
+  const isRequiresCorrection = previousSubmission?.status === 'requires_correction';
 
   return (
     <div style={{ paddingTop: '2rem', paddingBottom: '4rem' }}>
@@ -143,6 +195,11 @@ export function ExerciseSolverView() {
                     Java 21 (Simulación)
                   </span>
                 )}
+                {isRequiresCorrection && (
+                  <span className="badge badge-gold" style={{ fontSize: '0.8rem' }}>
+                    <AlertTriangle size={12} /> {t('student.status_requires_correction')}
+                  </span>
+                )}
               </div>
             </div>
             {submissionStatus === 'success' && (
@@ -151,8 +208,27 @@ export function ExerciseSolverView() {
                 <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>{t('exercise.solution_sent')}</span>
               </div>
             )}
+            {draftSavedMessage && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--accent-cyan)', backgroundColor: 'rgba(6, 182, 212, 0.1)', padding: '0.5rem 1rem', borderRadius: 'var(--radius-full)' }}>
+                <BookmarkCheck size={18} />
+                <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>{draftSavedMessage}</span>
+              </div>
+            )}
           </div>
         </div>
+
+        {/* Previous Feedback Alert if Requires Correction */}
+        {isRequiresCorrection && previousSubmission?.feedback && (
+          <div style={{ backgroundColor: 'rgba(245, 158, 11, 0.12)', border: '1px solid #F59E0B', borderRadius: 'var(--radius-md)', padding: '1rem 1.25rem', color: '#F59E0B' }}>
+            <div style={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
+              <AlertTriangle size={18} />
+              <span>{t('student.previous_feedback_alert')}</span>
+            </div>
+            <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-primary)', lineHeight: 1.5 }}>
+              "{previousSubmission.feedback}"
+            </p>
+          </div>
+        )}
 
         {/* Layout Split: Instructions | Sandbox */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '1.5rem', alignItems: 'start' }}>
@@ -177,12 +253,22 @@ export function ExerciseSolverView() {
           <div className="card" style={{ padding: '0', overflow: 'hidden', display: 'flex', flexDirection: 'column', gap: '0' }}>
             
             {/* Toolbar Principal Único */}
-            <div style={{ padding: '0.75rem 1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'var(--bg-surface-secondary)', borderBottom: '1px solid var(--border-subtle)' }}>
+            <div style={{ padding: '0.75rem 1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'var(--bg-surface-secondary)', borderBottom: '1px solid var(--border-subtle)', flexWrap: 'wrap', gap: '0.5rem' }}>
               <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                 <span className="badge badge-purple" style={{ textTransform: 'uppercase' }}>{exercise.language}</span>
                 <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Saldo: <strong>{balance} tokens</strong></span>
               </div>
-              <div style={{ display: 'flex', gap: '0.75rem' }}>
+              <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                <button
+                  onClick={handleSaveAttempt}
+                  disabled={isSavingDraft}
+                  className="btn btn-secondary btn-sm"
+                  style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}
+                  type="button"
+                >
+                  <Save size={14} />
+                  <span>{isSavingDraft ? 'Guardando...' : (t('student.save_attempt_btn') || 'Guardar Borrador')}</span>
+                </button>
                 <button 
                   onClick={handleSubmit}
                   disabled={isSubmitting || submissionStatus === 'success'}
@@ -191,7 +277,7 @@ export function ExerciseSolverView() {
                   type="button"
                 >
                   {isSubmitting ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
-                  <span>{isSubmitting ? 'Enviando...' : 'Enviar Solución'}</span>
+                  <span>{isSubmitting ? 'Enviando...' : (isRequiresCorrection ? (t('student.btn_resubmit') || 'Reentregar Solución') : 'Enviar Solución')}</span>
                 </button>
               </div>
             </div>
@@ -200,7 +286,7 @@ export function ExerciseSolverView() {
             <CodeEditor 
               language={exercise.language === 'python' ? 'python' : 'java'}
               filename={`exercise_${exercise.id}.${exercise.language === 'python' ? 'py' : 'java'}`}
-              initialCode={exercise.initialCode}
+              initialCode={code || exercise.initialCode}
               height="350px"
               onChange={(val) => setCode(val)}
               tokenCost={2}

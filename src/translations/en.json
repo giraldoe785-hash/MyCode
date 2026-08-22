@@ -4,7 +4,7 @@
     "live": "Live",
     "sandbox": "Sandbox",
     "plans": "Plans",
-    "dashboard": "Dashboard",
+    "dashboard": "My Dashboard",
     "wallet": "My Wallet",
     "upgrade_plan": "Upgrade Plan",
     "logout": "Log Out",
@@ -17,7 +17,10 @@
     "plan_prefix": "Plan",
     "tokens_suffix": "tokens",
     "theme_dark": "Switch to Dark Mode",
-    "theme_light": "Switch to Light Mode"
+    "theme_light": "Switch to Light Mode",
+    "theme_toggle_label": "Toggle visual theme",
+    "theme_current_dark": "Dark Mode",
+    "theme_current_light": "Light Mode"
   },
   "hero": {
     "badge": "Next Generation of Code Education VOD & Live",
@@ -353,7 +356,13 @@
     "locked_msg": "Account locked for security. Try again in {time}.",
     "btn_login": "Sign In",
     "btn_logging_in": "Verifying...",
-    "register_here": "Register here"
+    "register_here": "Register here",
+    "generate_pwd_btn": "Generate strong password",
+    "copy_pwd_btn": "Copy",
+    "pwd_copied_toast": "Password copied to clipboard!",
+    "pwd_copied_badge": "Copied!",
+    "pwd_generator_title": "Strong Password Generator",
+    "pwd_generated_success": "Strong password generated and applied"
   },
   "errors": {
     "email_rfc5322": "Please enter a valid email address (RFC 5322).",
@@ -589,5 +598,112 @@
     "confirm_new_password": "Confirm New Password *",
     "update_password_btn": "Update Password",
     "updating_password": "Updating..."
+  },
+  "tokens": {
+    "badge": "Token Recharge",
+    "title": "Token Packages",
+    "subtitle": "Choose a package to keep running simulations, solving exercises, and unlocking content.",
+    "popular_badge": "Most popular",
+    "discount_prefix": "Save {discount}",
+    "add_to_cart": "Add to cart",
+    "in_cart": "In cart ({count})",
+    "packages": {
+      "handful": {
+        "name": "Token Handful",
+        "description": "Ideal for getting started with compilations and quick tests in the Sandbox."
+      },
+      "bucket": {
+        "name": "Token Bucket",
+        "description": "Perfect for completing full course modules and unlocking lessons."
+      },
+      "wagon": {
+        "name": "Token Wagon",
+        "description": "The most popular package chosen by active students with 30% savings."
+      },
+      "mountain": {
+        "name": "Token Mountain",
+        "description": "Maximum performance for intensive developers and complex projects."
+      }
+    }
+  },
+  "cart": {
+    "title": "Token Cart",
+    "open_cart": "View shopping cart",
+    "items_count": "{count} package",
+    "items_count_plural": "{count} packages",
+    "empty_title": "Your cart is empty",
+    "empty_message": "Add a token package to recharge your balance and keep coding without interruptions.",
+    "browse_packages": "Browse Token Packages",
+    "subtotal": "Subtotal",
+    "total": "Total",
+    "total_tokens": "Tokens to receive",
+    "total_to_pay": "Total to pay",
+    "clear_cart": "Empty cart",
+    "checkout_btn": "Proceed to Checkout",
+    "unit_price": "each",
+    "remove": "Remove package",
+    "order_summary_title": "Order Summary",
+    "packages_selected": "Packages selected",
+    "checkout_modal_title": "Payment Gateway (Prototype)",
+    "checkout_mock_notice": "The token purchasing system is currently in a frontend educational prototype phase. No real monetary charges or bank transfers are processed in the current version.",
+    "checkout_mock_btn": "Understood",
+    "item_added_toast": "{name} added to cart!",
+    "item_removed_toast": "{name} removed from cart",
+    "cart_cleared_toast": "Cart emptied successfully"
+  },
+  "student": {
+    "hub_badge": "Academic Experience",
+    "hub_title": "Student Hub",
+    "hub_subtitle": "Your interactive learning center: enrolled courses, coding challenges, feedback, and academic progress.",
+    "tab_overview": "Academic Overview",
+    "tab_my_courses": "My Courses",
+    "tab_exercises": "Exercises & Tasks",
+    "tab_progress": "Progress & Grades",
+    "stat_enrolled_courses": "Active Courses",
+    "stat_completed_lessons": "Watched Lessons",
+    "stat_completed_exercises": "Approved Exercises",
+    "stat_pending_exercises": "Pending Tasks",
+    "stat_gpa": "Grade Average",
+    "stat_streak": "Active Streak",
+    "continue_title": "Continue Learning",
+    "continue_subtitle": "Resume your lessons right at the second where you left off.",
+    "last_visited": "Last lesson:",
+    "resume_btn": "Resume →",
+    "explore_catalog_btn": "Explore Course Catalog",
+    "empty_enrolled_courses": "You haven't enrolled in any courses yet. Explore our catalog and start coding.",
+    "filter_all": "All",
+    "filter_pending": "Pending",
+    "filter_submitted": "Under Review",
+    "filter_approved": "Approved",
+    "filter_requires_correction": "Requires Correction",
+    "status_pending": "Pending",
+    "status_submitted": "Submitted",
+    "status_under_review": "Under Review",
+    "status_approved": "Approved",
+    "status_requires_correction": "Requires Correction",
+    "btn_solve": "Solve Challenge",
+    "btn_resubmit": "Resubmit",
+    "btn_view_feedback": "View Feedback",
+    "feedback_modal_title": "Evaluation & Feedback",
+    "feedback_score": "Score Obtained:",
+    "feedback_teacher": "Evaluated by:",
+    "feedback_comments": "Instructor Remarks:",
+    "feedback_date": "Evaluation Date:",
+    "feedback_submitted_code": "Evaluated Code:",
+    "feedback_close": "Close",
+    "announcements_title": "Course Announcements",
+    "announcements_subtitle": "Announcements and updates published by your instructors.",
+    "no_announcements": "No recent announcements for your enrolled courses.",
+    "activity_title": "Recent Academic Activity",
+    "activity_subtitle": "Timeline of completed lessons, attempts, and submissions.",
+    "no_activity": "No academic activity recorded yet.",
+    "progress_breakdown_title": "Academic Progress Breakdown",
+    "lessons_count_format": "{completed} of {total} lessons ({pct}%)",
+    "exercises_count_format": "{completed} of {total} exercises",
+    "course_teacher": "Instructor:",
+    "save_attempt_btn": "Save Draft",
+    "attempt_saved_toast": "Code draft saved locally",
+    "solution_submitted_toast": "Solution submitted to instructor successfully",
+    "previous_feedback_alert": "⚠️ Attention: This submission requires correction based on your instructor's review."
   }
 }

@@ -16,6 +16,58 @@ export const INITIAL_USER = {
   diasRacha: 5
 };
 
+
+export const TOKEN_PACKAGES = [
+  {
+    id: "handful",
+    nameKey: "tokens.packages.handful.name",
+    descriptionKey: "tokens.packages.handful.description",
+    tokenAmount: 100,
+    price: 4.99,
+    currency: "USD",
+    discount: null,
+    popular: false,
+    tier: "starter",
+    iconName: "Coins"
+  },
+  {
+    id: "bucket",
+    nameKey: "tokens.packages.bucket.name",
+    descriptionKey: "tokens.packages.bucket.description",
+    tokenAmount: 500,
+    price: 19.99,
+    currency: "USD",
+    discount: "15%",
+    popular: false,
+    tier: "medium",
+    iconName: "Package"
+  },
+  {
+    id: "wagon",
+    nameKey: "tokens.packages.wagon.name",
+    descriptionKey: "tokens.packages.wagon.description",
+    tokenAmount: 1500,
+    price: 49.99,
+    currency: "USD",
+    discount: "30%",
+    popular: true,
+    tier: "large",
+    iconName: "Truck"
+  },
+  {
+    id: "mountain",
+    nameKey: "tokens.packages.mountain.name",
+    descriptionKey: "tokens.packages.mountain.description",
+    tokenAmount: 5000,
+    price: 129.99,
+    currency: "USD",
+    discount: "45%",
+    popular: false,
+    tier: "premium",
+    iconName: "Mountain"
+  }
+];
+
 export const TOKEN_COSTS = {
   COMPILATION: 2,
   UNLOCK_LESSON: 5,
@@ -675,5 +727,119 @@ export const ACHIEVEMENTS_DATA = [
     color: "#FFD700",
     requiredXP: 1000,
     checkUnlocked: (user) => (user?.experienciaXP || 0) >= 1000
+  }
+];
+
+
+// Academic Student Hub Data Models
+
+export const INITIAL_ENROLLMENTS = [
+  {
+    id: "enr_101",
+    studentId: "usr_101",
+    courseId: "course-java-spring",
+    status: "active",
+    enrolledAt: "2026-01-15T10:00:00Z",
+    completedAt: null,
+    lastActivityAt: "2026-08-16T14:30:00Z"
+  },
+  {
+    id: "enr_102",
+    studentId: "usr_101",
+    courseId: "course-python-ml",
+    status: "active",
+    enrolledAt: "2026-02-01T09:00:00Z",
+    completedAt: null,
+    lastActivityAt: "2026-08-15T18:00:00Z"
+  }
+];
+
+export const INITIAL_ATTEMPTS = [
+  {
+    id: "att_101_1",
+    studentId: "usr_101",
+    exerciseId: "ex_101",
+    code: `package com.mycode.demo;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class Application {
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+        System.out.println("⚡ MyCode Spring Core Inicializado!");
+    }
+}`,
+    language: "java",
+    passed: true,
+    result: "⚡ MyCode Spring Core Inicializado!",
+    createdAt: "2026-08-15T11:45:00Z"
+  }
+];
+
+export const INITIAL_ANNOUNCEMENTS = [
+  {
+    id: "ann_01",
+    courseId: "course-java-spring",
+    courseTitle: "Arquitectura Backend con Java & Spring Boot 3",
+    courseTitleEn: "Backend Architecture with Java & Spring Boot 3",
+    instructor: "Carlos Mendoza",
+    instructorAvatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
+    title: "Nueva clase complementaria: Virtual Threads en Java 23",
+    titleEn: "New complementary lesson: Virtual Threads in Java 23",
+    content: "Hemos subido material adicional sobre concurrencia ligera y profiling en producción.",
+    contentEn: "We uploaded extra material about lightweight concurrency and production profiling.",
+    date: "2026-08-16 10:00",
+    read: false
+  },
+  {
+    id: "ann_02",
+    courseId: "course-python-ml",
+    courseTitle: "Mastering Python: De Cero a Machine Learning",
+    courseTitleEn: "Mastering Python: From Zero to Machine Learning",
+    instructor: "Dra. Elena Rostova",
+    instructorAvatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80",
+    title: "Fecha límite para la entrega de matrices NumPy",
+    titleEn: "Deadline for NumPy matrix submission",
+    content: "Recuerden enviar su solución antes del fin de semana para recibir retroalimentación personalizada.",
+    contentEn: "Remember to submit your solution before the weekend to receive personalized feedback.",
+    date: "2026-08-15 16:30",
+    read: true
+  }
+];
+
+export const INITIAL_ACTIVITY = [
+  {
+    id: "act_1",
+    studentId: "usr_101",
+    type: "lesson_completed",
+    title: "Lección 1.1 Completada",
+    titleEn: "Lesson 1.1 Completed",
+    description: "Introducción y Setup de Spring Boot 3",
+    descriptionEn: "Introduction & Setup of Spring Boot 3",
+    courseId: "course-java-spring",
+    timestamp: "2026-08-16T14:30:00Z"
+  },
+  {
+    id: "act_2",
+    studentId: "usr_101",
+    type: "evaluation_received",
+    title: "Calificación Recibida (100/100)",
+    titleEn: "Grade Received (100/100)",
+    description: "Hello World en Spring Boot - Carlos Mendoza",
+    descriptionEn: "Hello World in Spring Boot - Carlos Mendoza",
+    courseId: "course-java-spring",
+    timestamp: "2026-08-15T12:30:00Z"
+  },
+  {
+    id: "act_3",
+    studentId: "usr_101",
+    type: "exercise_submitted",
+    title: "Solución Enviada",
+    titleEn: "Solution Submitted",
+    description: "Hello World en Spring Boot",
+    descriptionEn: "Hello World in Spring Boot",
+    courseId: "course-java-spring",
+    timestamp: "2026-08-15T12:00:00Z"
   }
 ];

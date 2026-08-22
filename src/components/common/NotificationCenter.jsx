@@ -101,12 +101,11 @@ export function NotificationCenter() {
         <Bell size={18} />
         {unreadCount > 0 && (
           <span
+            className="notification-counter-badge"
             style={{
               position: 'absolute',
               top: '2px',
               right: '2px',
-              backgroundColor: 'var(--accent-purple)',
-              color: '#FFFFFF',
               fontSize: '0.65rem',
               fontWeight: 800,
               width: '16px',
@@ -114,8 +113,7 @@ export function NotificationCenter() {
               borderRadius: '50%',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
-              boxShadow: '0 0 8px var(--accent-purple-glow)'
+              justifyContent: 'center'
             }}
           >
             {unreadCount}

@@ -6,6 +6,8 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { WalletProvider, useWallet } from './context/WalletContext';
 import { VideoProgressProvider } from './context/VideoProgressContext';
 import { LiveStreamProvider } from './context/LiveStreamContext';
+import { CartProvider } from './context/CartContext';
+import { CartDrawer } from './components/cart/CartDrawer';
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
@@ -101,6 +103,7 @@ export function App() {
           <WalletProvider>
             <VideoProgressProvider>
               <LiveStreamProvider>
+                <CartProvider>
                 <BrowserRouter>
                   <div className="app-container">
                     <Navbar />
@@ -116,6 +119,22 @@ export function App() {
                           <Route path="/playground" element={<PlaygroundView />} />
                                                     <Route
                             path="/dashboard"
+                            element={
+                              <ProtectedRoute>
+                                <DashboardView />
+                              </ProtectedRoute>
+                            }
+                          />
+                          <Route
+                            path="/student"
+                            element={
+                              <ProtectedRoute>
+                                <DashboardView />
+                              </ProtectedRoute>
+                            }
+                          />
+                          <Route
+                            path="/student/dashboard"
                             element={
                               <ProtectedRoute>
                                 <DashboardView />
@@ -173,8 +192,10 @@ export function App() {
                     </main>
                     <Footer />
                     <ToastContainer />
+                    <CartDrawer />
                   </div>
                 </BrowserRouter>
+              </CartProvider>
               </LiveStreamProvider>
             </VideoProgressProvider>
           </WalletProvider>

@@ -80,7 +80,7 @@ export function CourseCatalogView() {
       <div className="container" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
         {/* Header */}
         <div>
-          <div style={{ color: 'var(--accent-purple)', fontWeight: 700, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+          <div className="section-overline">
             {t('courses.badge')}
           </div>
           <h1 className="heading-lg" style={{ margin: '0.25rem 0' }}>
@@ -102,7 +102,7 @@ export function CourseCatalogView() {
                 placeholder={t('courses.search_placeholder')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="form-input"
+                className="form-input search-input-gold"
                 style={{ paddingLeft: '2.5rem' }}
               />
             </div>
@@ -112,7 +112,7 @@ export function CourseCatalogView() {
               <select
                 value={selectedLanguage}
                 onChange={(e) => setSelectedLanguage(e.target.value)}
-                className="form-input"
+                className={`form-input filter-select-gold ${selectedLanguage !== 'all' ? 'filter-active' : ''}`}
                 aria-label="Filtrar por lenguaje"
               >
                 <option value="all">{t('courses.filter_language')} {t('courses.all')}</option>
@@ -128,7 +128,7 @@ export function CourseCatalogView() {
               <select
                 value={selectedLevel}
                 onChange={(e) => setSelectedLevel(e.target.value)}
-                className="form-input"
+                className={`form-input filter-select-gold ${selectedLevel !== 'all' ? 'filter-active' : ''}`}
                 aria-label="Filtrar por nivel"
               >
                 <option value="all">{t('courses.filter_level')} {t('courses.all')}</option>
@@ -143,7 +143,7 @@ export function CourseCatalogView() {
               <select
                 value={selectedFormat}
                 onChange={(e) => setSelectedFormat(e.target.value)}
-                className="form-input"
+                className={`form-input filter-select-gold ${selectedFormat !== 'all' ? 'filter-active' : ''}`}
                 aria-label="Filtrar por formato"
               >
                 <option value="all">{t('courses.filter_format')} {t('courses.all')}</option>

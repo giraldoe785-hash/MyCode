@@ -4,7 +4,7 @@
     "live": "En Vivo",
     "sandbox": "Sandbox",
     "plans": "Planes",
-    "dashboard": "Dashboard",
+    "dashboard": "Mi Panel",
     "wallet": "Mi Billetera",
     "upgrade_plan": "Mejorar Plan",
     "logout": "Cerrar Sesión",
@@ -17,7 +17,10 @@
     "plan_prefix": "Plan",
     "tokens_suffix": "tokens",
     "theme_dark": "Cambiar a modo oscuro",
-    "theme_light": "Cambiar a modo claro"
+    "theme_light": "Cambiar a modo claro",
+    "theme_toggle_label": "Cambiar tema visual",
+    "theme_current_dark": "Modo Oscuro",
+    "theme_current_light": "Modo Claro"
   },
   "hero": {
     "badge": "Nueva Generación de Educación en Código VOD & Live",
@@ -353,7 +356,13 @@
     "locked_msg": "Cuenta bloqueada por seguridad. Intenta de nuevo en {time}.",
     "btn_login": "Iniciar Sesión",
     "btn_logging_in": "Verificando...",
-    "register_here": "Regístrate aquí"
+    "register_here": "Regístrate aquí",
+    "generate_pwd_btn": "Generar contraseña segura",
+    "copy_pwd_btn": "Copiar",
+    "pwd_copied_toast": "¡Contraseña copiada al portapapeles!",
+    "pwd_copied_badge": "¡Copiada!",
+    "pwd_generator_title": "Generador de Clave Segura",
+    "pwd_generated_success": "Contraseña segura generada y aplicada"
   },
   "errors": {
     "email_rfc5322": "Por favor, introduce un correo electrónico válido (RFC 5322).",
@@ -589,5 +598,112 @@
     "confirm_new_password": "Confirmar Nueva Contraseña *",
     "update_password_btn": "Actualizar Contraseña",
     "updating_password": "Actualizando..."
+  },
+  "tokens": {
+    "badge": "Recarga de Tokens",
+    "title": "Paquetes de Tokens",
+    "subtitle": "Elige un paquete para continuar ejecutando simulaciones, resolviendo ejercicios y desbloqueando contenidos.",
+    "popular_badge": "Más popular",
+    "discount_prefix": "Ahorra {discount}",
+    "add_to_cart": "Agregar al carrito",
+    "in_cart": "En el carrito ({count})",
+    "packages": {
+      "handful": {
+        "name": "Puñado de Tokens",
+        "description": "Ideal para comenzar a compilar ejercicios y pruebas rápidas en el Sandbox."
+      },
+      "bucket": {
+        "name": "Balde de Tokens",
+        "description": "Perfecto para completar módulos enteros de cursos y desbloquear lecciones."
+      },
+      "wagon": {
+        "name": "Vagón de Tokens",
+        "description": "El paquete más elegido por estudiantes activos con ahorro del 30%."
+      },
+      "mountain": {
+        "name": "Montaña de Tokens",
+        "description": "Máximo rendimiento para desarrolladores intensivos y proyectos complejos."
+      }
+    }
+  },
+  "cart": {
+    "title": "Carrito de Tokens",
+    "open_cart": "Ver carrito de compras",
+    "items_count": "{count} paquete",
+    "items_count_plural": "{count} paquetes",
+    "empty_title": "Tu carrito está vacío",
+    "empty_message": "Añade un paquete de tokens para recargar tu saldo y continuar programando sin interrupciones.",
+    "browse_packages": "Explorar Paquetes de Tokens",
+    "subtotal": "Subtotal",
+    "total": "Total",
+    "total_tokens": "Tokens a recibir",
+    "total_to_pay": "Total a pagar",
+    "clear_cart": "Vaciar carrito",
+    "checkout_btn": "Continuar al Pago",
+    "unit_price": "c/u",
+    "remove": "Eliminar paquete",
+    "order_summary_title": "Resumen del Pedido",
+    "packages_selected": "Paquetes seleccionados",
+    "checkout_modal_title": "Pasarela de Pago (Prototipo)",
+    "checkout_mock_notice": "El sistema de compra de tokens se encuentra en fase de prototipo educativo frontend. En la versión actual no se procesan cobros monetarios reales ni transferencias bancarias.",
+    "checkout_mock_btn": "Entendido",
+    "item_added_toast": "¡{name} agregado al carrito!",
+    "item_removed_toast": "{name} eliminado del carrito",
+    "cart_cleared_toast": "Carrito vaciado correctamente"
+  },
+  "student": {
+    "hub_badge": "Experiencia Académica",
+    "hub_title": "Student Hub",
+    "hub_subtitle": "Tu centro de aprendizaje interactivo: cursos inscritos, retos de código, retroalimentación y avance académico.",
+    "tab_overview": "Resumen Académico",
+    "tab_my_courses": "Mis Cursos",
+    "tab_exercises": "Ejercicios & Tareas",
+    "tab_progress": "Progreso & Notas",
+    "stat_enrolled_courses": "Cursos Activos",
+    "stat_completed_lessons": "Lecciones Vistas",
+    "stat_completed_exercises": "Ejercicios Aprobados",
+    "stat_pending_exercises": "Retos Pendientes",
+    "stat_gpa": "Promedio General",
+    "stat_streak": "Racha Activa",
+    "continue_title": "Continuar Aprendizaje",
+    "continue_subtitle": "Reanuda tus lecciones exactamente en el segundo donde te quedaste.",
+    "last_visited": "Última lección:",
+    "resume_btn": "Reanudar →",
+    "explore_catalog_btn": "Explorar Catálogo de Cursos",
+    "empty_enrolled_courses": "Aún no te has inscrito a ningún curso. Explora nuestro catálogo y comienza a programar.",
+    "filter_all": "Todos",
+    "filter_pending": "Pendientes",
+    "filter_submitted": "En Revisión",
+    "filter_approved": "Aprobados",
+    "filter_requires_correction": "Requiere Corrección",
+    "status_pending": "Pendiente",
+    "status_submitted": "Enviado",
+    "status_under_review": "En Revisión",
+    "status_approved": "Aprobado",
+    "status_requires_correction": "Requiere Corrección",
+    "btn_solve": "Resolver Reto",
+    "btn_resubmit": "Reentregar",
+    "btn_view_feedback": "Ver Feedback",
+    "feedback_modal_title": "Evaluación & Retroalimentación",
+    "feedback_score": "Calificación Obtenida:",
+    "feedback_teacher": "Evaluado por:",
+    "feedback_comments": "Observaciones del Instructor:",
+    "feedback_date": "Fecha de Evaluación:",
+    "feedback_submitted_code": "Código Evaluado:",
+    "feedback_close": "Cerrar",
+    "announcements_title": "Anuncios de tus Cursos",
+    "announcements_subtitle": "Comunicados y novedades publicadas por tus instructores.",
+    "no_announcements": "No hay anuncios recientes en tus cursos inscritos.",
+    "activity_title": "Actividad Académica Reciente",
+    "activity_subtitle": "Historial de lecciones completadas, intentos y entregas.",
+    "no_activity": "Aún no tienes actividad académica registrada.",
+    "progress_breakdown_title": "Desglose de Avance Académico",
+    "lessons_count_format": "{completed} de {total} lecciones ({pct}%)",
+    "exercises_count_format": "{completed} de {total} ejercicios",
+    "course_teacher": "Profesor:",
+    "save_attempt_btn": "Guardar Borrador",
+    "attempt_saved_toast": "Borrador de código guardado localmente",
+    "solution_submitted_toast": "Solución enviada al profesor correctamente",
+    "previous_feedback_alert": "⚠️ Atención: Esta entrega requiere corrección según la revisión de tu profesor."
   }
 }

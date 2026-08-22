@@ -177,9 +177,9 @@ export function InstructorDashboardView() {
           </div>
 
           <button
+            type="button"
             onClick={() => setIsLiveModalOpen(true)}
-            className="btn btn-primary"
-            style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', backgroundColor: '#EF4444', borderColor: '#EF4444', boxShadow: '0 0 15px rgba(239,68,68,0.3)' }}
+            className="btn btn-start-live"
           >
             <Radio size={16} className="animate-pulse" />
             <span>{t('instructor.start_live_btn')}</span>

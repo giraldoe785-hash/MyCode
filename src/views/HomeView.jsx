@@ -158,7 +158,7 @@ export function HomeView() {
       <section className="container">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
           <div>
-            <div style={{ color: 'var(--accent-purple)', fontWeight: 700, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            <div className="section-overline">
               {t('home.featured_badge')}
             </div>
             <h2 className="heading-lg" style={{ margin: '0.25rem 0' }}>{t('home.featured_title')}</h2>
@@ -279,7 +279,7 @@ export function HomeView() {
       {/* 6. Pricing Preview Section with New Metallic Cards */}
       <section className="container">
         <div style={{ textAlign: 'center', maxWidth: '650px', margin: '0 auto 2.5rem' }}>
-          <div style={{ color: 'var(--accent-purple)', fontWeight: 700, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+          <div className="section-overline">
             {t('home.pricing_badge')}
           </div>
           <h2 className="heading-lg" style={{ margin: '0.25rem 0' }}>{t('home.pricing_title')}</h2>

@@ -519,6 +519,122 @@ export class JavaExecutionService {
   /**
    * Ejecuta el código Java dentro del simulador educativo frontend.
    */
+  /**
+   * Fábrica reutilizable de JOptionPane (Swing) para ejecución síncrona/asíncrona
+   */
+  static createJOptionPane(onDialogRequest, onInputRequest, printFallback = () => {}) {
+    return {
+      DEFAULT_OPTION: -1,
+      YES_NO_OPTION: 0,
+      YES_NO_CANCEL_OPTION: 1,
+      OK_CANCEL_OPTION: 2,
+      YES_OPTION: 0,
+      NO_OPTION: 1,
+      CANCEL_OPTION: 2,
+      OK_OPTION: 0,
+      CLOSED_OPTION: -1,
+      ERROR_MESSAGE: 0,
+      INFORMATION_MESSAGE: 1,
+      WARNING_MESSAGE: 2,
+      QUESTION_MESSAGE: 3,
+      PLAIN_MESSAGE: -1,
+
+      async showMessageDialog(parent, message, title = 'Mensaje', messageType = 1) {
+        const msg = (message !== null && message !== undefined && typeof message === 'object' && '__javaType' in message)
+          ? message.toString()
+          : (message === null ? 'null' : (message instanceof Error ? message.message : String(message)));
+
+        const dialogTitle = (title !== null && title !== undefined) ? String(title) : 'Mensaje';
+
+        if (onDialogRequest) {
+          await onDialogRequest({
+            type: 'message',
+            title: dialogTitle,
+            message: msg,
+            messageType
+          });
+        } else {
+          printFallback(msg);
+        }
+      },
+
+      async showInputDialog(parentOrMessage, messageOrTitle, titleOrType, messageType = 3) {
+        let promptMsg = '';
+        let dialogTitle = 'Entrada requerida';
+
+        if (arguments.length === 1) {
+          promptMsg = parentOrMessage === null ? 'null' : String(parentOrMessage);
+        } else if (arguments.length === 2 && parentOrMessage === null) {
+          promptMsg = messageOrTitle === null ? 'null' : String(messageOrTitle);
+        } else if (arguments.length >= 3 && parentOrMessage === null) {
+          promptMsg = messageOrTitle === null ? 'null' : String(messageOrTitle);
+          dialogTitle = titleOrType !== undefined ? String(titleOrType) : 'Entrada requerida';
+        } else {
+          promptMsg = parentOrMessage === null ? (messageOrTitle !== undefined ? String(messageOrTitle) : 'null') : String(parentOrMessage);
+          if (messageOrTitle !== undefined) dialogTitle = String(messageOrTitle);
+        }
+
+        if (onDialogRequest) {
+          const result = await onDialogRequest({
+            type: 'input',
+            title: dialogTitle,
+            message: promptMsg,
+            messageType
+          });
+          return (result === null || result === undefined) ? null : String(result);
+        } else if (onInputRequest) {
+          const result = await onInputRequest(promptMsg);
+          return (result === null || result === undefined) ? null : String(result);
+        } else {
+          return null;
+        }
+      },
+
+      async showConfirmDialog(parent, message, title = 'Confirmar', optionType = 0, messageType = 3) {
+        const msg = (message !== null && message !== undefined && typeof message === 'object' && '__javaType' in message)
+          ? message.toString()
+          : (message === null ? 'null' : (message instanceof Error ? message.message : String(message)));
+        const dialogTitle = title !== undefined ? String(title) : 'Confirmar';
+
+        if (onDialogRequest) {
+          const result = await onDialogRequest({
+            type: 'confirm',
+            title: dialogTitle,
+            message: msg,
+            optionType,
+            messageType
+          });
+          return (typeof result === 'number') ? result : (result === false ? 1 : result === null ? -1 : 0);
+        } else {
+          return 0;
+        }
+      },
+
+      async showOptionDialog(parent, message, title, optionType, messageType, icon, options, initialValue) {
+        const msg = (message !== null && message !== undefined && typeof message === 'object' && '__javaType' in message)
+          ? message.toString()
+          : (message === null ? 'null' : (message instanceof Error ? message.message : String(message)));
+        const dialogTitle = title !== undefined ? String(title) : 'Seleccionar opción';
+        const opts = Array.isArray(options) ? options.map(o => String(o)) : ['Aceptar'];
+
+        if (onDialogRequest) {
+          const result = await onDialogRequest({
+            type: 'option',
+            title: dialogTitle,
+            message: msg,
+            options: opts,
+            initialValue: initialValue !== undefined ? String(initialValue) : opts[0],
+            optionType,
+            messageType
+          });
+          return (typeof result === 'number') ? result : -1;
+        } else {
+          return 0;
+        }
+      }
+    };
+  }
+
   static async execute(rawCode, { onOutput, onInputRequest, onDialogRequest, cMathHelpers = null, isCommonsMath = false } = {}) {
     await new Promise(r => setTimeout(r, 60));
     const code = (rawCode || '').trim();
@@ -739,116 +855,7 @@ export class JavaExecutionService {
     };
 
     // Helper pedagógico para JOptionPane (Swing Simulado Asíncrono)
-    const JOptionPane = {
-      DEFAULT_OPTION: -1,
-      YES_NO_OPTION: 0,
-      YES_NO_CANCEL_OPTION: 1,
-      OK_CANCEL_OPTION: 2,
-      YES_OPTION: 0,
-      NO_OPTION: 1,
-      CANCEL_OPTION: 2,
-      OK_OPTION: 0,
-      CLOSED_OPTION: -1,
-      ERROR_MESSAGE: 0,
-      INFORMATION_MESSAGE: 1,
-      WARNING_MESSAGE: 2,
-      QUESTION_MESSAGE: 3,
-      PLAIN_MESSAGE: -1,
-
-      async showMessageDialog(parent, message, title = 'Mensaje', messageType = 1) {
-        const msg = (message !== null && message !== undefined && typeof message === 'object' && '__javaType' in message)
-          ? message.toString()
-          : (message === null ? 'null' : (message instanceof Error ? message.message : String(message)));
-
-        const dialogTitle = (title !== null && title !== undefined) ? String(title) : 'Mensaje';
-
-        if (onDialogRequest) {
-          await onDialogRequest({
-            type: 'message',
-            title: dialogTitle,
-            message: msg,
-            messageType
-          });
-        } else {
-          __println(msg);
-        }
-      },
-
-      async showInputDialog(parentOrMessage, messageOrTitle, titleOrType, messageType = 3) {
-        let promptMsg = '';
-        let dialogTitle = 'Entrada requerida';
-
-        if (arguments.length === 1) {
-          promptMsg = parentOrMessage === null ? 'null' : String(parentOrMessage);
-        } else if (arguments.length === 2 && parentOrMessage === null) {
-          promptMsg = messageOrTitle === null ? 'null' : String(messageOrTitle);
-        } else if (arguments.length >= 3 && parentOrMessage === null) {
-          promptMsg = messageOrTitle === null ? 'null' : String(messageOrTitle);
-          dialogTitle = titleOrType !== undefined ? String(titleOrType) : 'Entrada requerida';
-        } else {
-          promptMsg = parentOrMessage === null ? (messageOrTitle !== undefined ? String(messageOrTitle) : 'null') : String(parentOrMessage);
-          if (messageOrTitle !== undefined) dialogTitle = String(messageOrTitle);
-        }
-
-        if (onDialogRequest) {
-          const result = await onDialogRequest({
-            type: 'input',
-            title: dialogTitle,
-            message: promptMsg,
-            messageType
-          });
-          return (result === null || result === undefined) ? null : String(result);
-        } else if (onInputRequest) {
-          const result = await onInputRequest(promptMsg);
-          return (result === null || result === undefined) ? null : String(result);
-        } else {
-          return null;
-        }
-      },
-
-      async showConfirmDialog(parent, message, title = 'Confirmar', optionType = 0, messageType = 3) {
-        const msg = (message !== null && message !== undefined && typeof message === 'object' && '__javaType' in message)
-          ? message.toString()
-          : (message === null ? 'null' : (message instanceof Error ? message.message : String(message)));
-        const dialogTitle = title !== undefined ? String(title) : 'Confirmar';
-
-        if (onDialogRequest) {
-          const result = await onDialogRequest({
-            type: 'confirm',
-            title: dialogTitle,
-            message: msg,
-            optionType,
-            messageType
-          });
-          return (typeof result === 'number') ? result : (result === false ? 1 : result === null ? -1 : 0);
-        } else {
-          return 0;
-        }
-      },
-
-      async showOptionDialog(parent, message, title, optionType, messageType, icon, options, initialValue) {
-        const msg = (message !== null && message !== undefined && typeof message === 'object' && '__javaType' in message)
-          ? message.toString()
-          : (message === null ? 'null' : (message instanceof Error ? message.message : String(message)));
-        const dialogTitle = title !== undefined ? String(title) : 'Seleccionar opción';
-        const opts = Array.isArray(options) ? options.map(o => String(o)) : ['Aceptar'];
-
-        if (onDialogRequest) {
-          const result = await onDialogRequest({
-            type: 'option',
-            title: dialogTitle,
-            message: msg,
-            options: opts,
-            initialValue: initialValue !== undefined ? String(initialValue) : opts[0],
-            optionType,
-            messageType
-          });
-          return (typeof result === 'number') ? result : -1;
-        } else {
-          return 0;
-        }
-      }
-    };
+    const JOptionPane = JavaExecutionService.createJOptionPane(onDialogRequest, onInputRequest, __println);
 
     // 9. Scope inyectado explícitamente en AsyncFunction
     const scope = {

@@ -1,5 +1,5 @@
 // API service layer with reactive localStorage synchronization
-import { INITIAL_USER, INITIAL_TRANSACTIONS, COURSES_DATA, LIVE_STREAMS, PLANS_DATA, TOKEN_COSTS, EJERCICIOS_DATA, ENTREGAS_DATA, USERS_DB, SAMPLE_VIDEOS, INITIAL_NOTIFICATIONS, ACHIEVEMENTS_DATA } from './mockData.js';
+import { INITIAL_USER, INITIAL_TRANSACTIONS, COURSES_DATA, LIVE_STREAMS, PLANS_DATA, TOKEN_COSTS, TOKEN_PACKAGES, EJERCICIOS_DATA, ENTREGAS_DATA, USERS_DB, SAMPLE_VIDEOS, INITIAL_NOTIFICATIONS, ACHIEVEMENTS_DATA, INITIAL_ENROLLMENTS, INITIAL_ATTEMPTS, INITIAL_ANNOUNCEMENTS, INITIAL_ACTIVITY } from './mockData.js';
 import { ExecutionService } from './execution/ExecutionService.js';
 
 const delay = (ms = 120) => new Promise(res => setTimeout(res, ms));
@@ -642,7 +642,16 @@ export const api = {
   },
 
   // --- Wallet & Token Economy Service ---
+  tokens: {
+    async getPackages() {
+      await delay(50);
+      return TOKEN_PACKAGES;
+    }
+  },
   wallet: {
+    getTokenPackages() {
+      return TOKEN_PACKAGES;
+    },
     validateBalanceIntegrity() {
       const current = getStored('mycode_tokens', 48);
       if (typeof current !== 'number' || isNaN(current) || current < 0) {
@@ -1022,6 +1031,112 @@ export const api = {
         totalEntregas: submissions.length,
         desgloseLecciones
       };
+    }
+  },
+
+
+  // --- Enrollments Service ---
+  enrollments: {
+    async getEnrollmentsByStudent(studentId = 'usr_101') {
+      await delay(80);
+      const list = getStored('mycode_enrollments', INITIAL_ENROLLMENTS);
+      return list.filter(e => e.studentId === studentId);
+    },
+    async enroll(studentId, courseId) {
+      await delay(150);
+      const list = getStored('mycode_enrollments', INITIAL_ENROLLMENTS);
+      const existing = list.find(e => e.studentId === studentId && e.courseId === courseId);
+      if (existing) return { success: true, enrollment: existing };
+      const newEnr = {
+        id: 'enr_' + Date.now(),
+        studentId,
+        courseId,
+        status: 'active',
+        enrolledAt: new Date().toISOString(),
+        completedAt: null,
+        lastActivityAt: new Date().toISOString()
+      };
+      const updated = [newEnr, ...list];
+      setStored('mycode_enrollments', updated);
+      return { success: true, enrollment: newEnr };
+    }
+  },
+
+  // --- Attempts Service (Drafts & Code Runs) ---
+  attempts: {
+    async getAttemptsByExercise(studentId, exerciseId) {
+      await delay(80);
+      const list = getStored('mycode_attempts', INITIAL_ATTEMPTS);
+      return list.filter(a => a.studentId === studentId && a.exerciseId === exerciseId);
+    },
+    async getLatestAttempt(studentId, exerciseId) {
+      await delay(50);
+      const list = getStored('mycode_attempts', INITIAL_ATTEMPTS);
+      const userAttempts = list.filter(a => a.studentId === studentId && a.exerciseId === exerciseId);
+      return userAttempts.length > 0 ? userAttempts[0] : null;
+    },
+    async saveAttempt(attemptData) {
+      await delay(100);
+      const list = getStored('mycode_attempts', INITIAL_ATTEMPTS);
+      const newAtt = {
+        id: 'att_' + Date.now(),
+        ...attemptData,
+        createdAt: new Date().toISOString()
+      };
+      setStored('mycode_attempts', [newAtt, ...list]);
+      return { success: true, attempt: newAtt };
+    }
+  },
+
+  // --- Evaluations Service ---
+  evaluations: {
+    async getEvaluationsByStudent(studentId = 'usr_101') {
+      await delay(80);
+      const subs = getStored('mycode_submissions', ENTREGAS_DATA);
+      return subs.filter(s => s.studentId === studentId && s.score !== null).map(s => ({
+        id: 'eval_' + s.id,
+        submissionId: s.id,
+        exerciseId: s.exerciseId,
+        courseId: s.courseId,
+        score: s.score,
+        grade: s.score,
+        feedback: s.feedback,
+        status: s.status,
+        evaluatedBy: s.reviewedBy || 'Carlos Mendoza',
+        evaluatedAt: s.reviewedAt || s.submittedAt
+      }));
+    }
+  },
+
+  // --- Announcements Service ---
+  announcements: {
+    async getAnnouncementsForStudent(studentId = 'usr_101') {
+      await delay(80);
+      return getStored('mycode_announcements', INITIAL_ANNOUNCEMENTS);
+    },
+    async markAsRead(announcementId) {
+      const list = getStored('mycode_announcements', INITIAL_ANNOUNCEMENTS);
+      const updated = list.map(a => a.id === announcementId ? { ...a, read: true } : a);
+      setStored('mycode_announcements', updated);
+      return { success: true };
+    }
+  },
+
+  // --- Student Activity Service ---
+  activity: {
+    async getStudentActivity(studentId = 'usr_101') {
+      await delay(80);
+      return getStored('mycode_activity', INITIAL_ACTIVITY).filter(a => a.studentId === studentId);
+    },
+    async recordActivity(activityData) {
+      const list = getStored('mycode_activity', INITIAL_ACTIVITY);
+      const newAct = {
+        id: 'act_' + Date.now(),
+        ...activityData,
+        timestamp: new Date().toISOString()
+      };
+      setStored('mycode_activity', [newAct, ...list]);
+      return { success: true, activity: newAct };
     }
   },
 
